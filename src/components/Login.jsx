@@ -29,24 +29,24 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
 
     try {
       console.log('Attempting login with:', { username: formData.username, password: formData.password });
-      
+
       const response = await apiService.post(endpoints.login, {
         username: formData.username,
         password: formData.password,
       });
-      
+
       console.log('Login successful:', response.data);
-      
+
       if (response.data.token) {
         // Store the token in both localStorage and sessionStorage
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        
+
         sessionStorage.setItem('backupToken', response.data.token);
         sessionStorage.setItem('backupUser', JSON.stringify(response.data.user));
-        
+
         console.log('Token stored successfully');
-        
+
         // Call the onLogin callback
         onLogin(response.data);
         return;
@@ -55,7 +55,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
       }
     } catch (err) {
       console.error('Login failed:', err);
-      
+
       let errorMessage = 'Login failed. Please check your credentials.';
       if (err.response?.data) {
         if (typeof err.response.data === 'string') {
@@ -85,22 +85,28 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
-            <div className="h-8 w-8 bg-blue-600 rounded"></div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="mx-auto h-8 w-8 flex items-center justify-center rounded-lg bg-blue-600 shadow">
+            <div className="h-2 w-2 bg-white rounded-sm"></div>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to TaskSphere
+
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            Welcome back
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Access the API testing interface
+
+          <p className="mt-2 text-sm text-gray-500">
+            Sign in to TaskSphere to continue
           </p>
         </div>
-        
-        <Card>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+
+        {/* Card */}
+        <div className="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+
             <Input
               label="Username or Email"
               type="text"
@@ -124,33 +130,33 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
             />
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-800 text-sm">{error}</p>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                <p className="text-red-600 text-sm">{error}</p>
               </div>
             )}
 
-            <Button
+            <button
               type="submit"
               disabled={loading}
-              className="w-full"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition-all duration-200 shadow-md disabled:opacity-60"
             >
-              {loading ? <Loading size="sm" text="" /> : 'Sign in'}
-            </Button>
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               Don't have an account?{' '}
               <button
                 type="button"
                 onClick={onSwitchToRegister}
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-blue-600 hover:text-blue-700"
               >
-                Sign up
+                Create account
               </button>
             </p>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

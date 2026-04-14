@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import Loading from './Loading';
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading, login } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {

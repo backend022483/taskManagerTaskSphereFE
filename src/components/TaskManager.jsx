@@ -46,7 +46,7 @@ const TaskManager = () => {
       // Only fetch from API if no local data exists
       fetchTasks();
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -308,15 +308,25 @@ const TaskManager = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-white shadow-lg rounded-xl p-6">
-        <div className="flex justify-between items-center">
+      <Card className="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-2xl font-bold text-gray-900">Task Manager</h2>
           <Button 
             onClick={() => setShowCreateForm(!showCreateForm)}
             variant="primary"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md font-medium flex items-center gap-2"
           >
-            {showCreateForm ? 'Cancel' : 'Create New Task'}
+            {showCreateForm ? (
+              <>
+<span>×</span>
+                Cancel
+              </>
+            ) : (
+              <>
+<span>+</span>
+                Create New Task
+              </>
+            )}
           </Button>
         </div>
 
@@ -328,13 +338,13 @@ const TaskManager = () => {
       </Card>
 
       {showCreateForm && (
-        <Card className="bg-white shadow-lg rounded-xl p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+        <Card className="bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">
             {editingTask ? 'Edit Task' : 'Create New Task'}
           </h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Title *
               </label>
               <Input
@@ -343,32 +353,32 @@ const TaskManager = () => {
                 onChange={(e) => setFormData({...formData, title: e.target.value})}
                 placeholder="Enter task title"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                 placeholder="Enter task description"
-                rows="3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows="4"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Status
                 </label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
                 >
                   {taskStatuses.map(status => (
                     <option key={status.value} value={status.value}>
@@ -379,13 +389,13 @@ const TaskManager = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Priority
                 </label>
                 <select
                   value={formData.priority}
                   onChange={(e) => setFormData({...formData, priority: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
                 >
                   {taskPriorities.map(priority => (
                     <option key={priority.value} value={priority.value}>
@@ -397,31 +407,41 @@ const TaskManager = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Due Date
               </label>
               <Input
                 type="date"
                 value={formData.due_date}
                 onChange={(e) => setFormData({...formData, due_date: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               />
             </div>
             
-            <div className="flex space-x-3">
+            <div className="flex gap-4">
               <Button
                 type="submit"
                 variant="primary"
                 disabled={loading}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-md font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {loading ? 'Saving...' : (editingTask ? 'Update Task' : 'Create Task')}
+                {loading ? (
+                  <>
+<span>⏳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+<span>✓</span>
+                    {editingTask ? 'Update Task' : 'Create Task'}
+                  </>
+                )}
               </Button>
               <Button
                 type="button"
                 onClick={resetForm}
                 variant="secondary"
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
               >
                 Cancel
               </Button>
@@ -430,27 +450,38 @@ const TaskManager = () => {
         </Card>
       )}
 
-      <Card className="bg-white shadow-lg rounded-xl p-6">
-        <div className="flex justify-between items-center mb-4">
+      <Card className="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h3 className="text-xl font-semibold text-gray-900">Your Tasks</h3>
           <Button
             onClick={fetchTasks}
             variant="secondary"
             disabled={loading}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 font-medium flex items-center gap-2"
           >
-            {loading ? 'Loading...' : 'Refresh Tasks'}
+            {loading ? (
+              <>
+<span>⏳</span>
+                Loading...
+              </>
+            ) : (
+              <>
+<span>↻</span>
+                Refresh Tasks
+              </>
+            )}
           </Button>
         </div>
 
         {loading && tasks.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-600">Loading tasks...</p>
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Loading tasks...</p>
           </div>
         ) : tasks.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-600">No tasks found. Create your first task!</p>
+          <div className="text-center py-12">
+<span className="text-2xl text-gray-400 mx-auto mb-4">📝</span>
+            <p className="text-gray-600 mb-4">No tasks found. Create your first task!</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -464,45 +495,47 @@ const TaskManager = () => {
               const priorityInfo = getPriorityInfo(task.priority);
               
               return (
-                <div key={task.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start">
+                <div key={task.id} className="border border-gray-200 rounded-xl p-5 hover:shadow-lg transition-shadow bg-gray-50">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         {task.title || 'No Title'}
                       </h3>
                       {task.description && (
-                        <p className="text-gray-600 mt-1">
+                        <p className="text-gray-600 mb-3">
                           {task.description}
                         </p>
                       )}
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
+                      <div className="flex flex-wrap gap-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
                           {statusInfo.label}
                         </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityInfo.color}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${priorityInfo.color}`}>
                           {priorityInfo.label}
                         </span>
                         {task.created_at && (
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-600">
                             Created: {new Date(task.created_at).toLocaleDateString()}
                           </span>
                         )}
                       </div>
                     </div>
-                    <div className="flex space-x-2 ml-4">
+                    <div className="flex gap-2 w-full sm:w-auto">
                       <Button
                         onClick={() => handleEdit(task)}
                         variant="secondary"
-                        className="px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors text-sm"
+                        className="flex-1 sm:flex-none px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium flex items-center justify-center gap-2"
                       >
+<span>✏️</span>
                         Edit
                       </Button>
                       <Button
                         onClick={() => handleDelete(task.id)}
                         variant="danger"
                         disabled={loading}
-                        className="px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors text-sm disabled:opacity-50"
+                        className="flex-1 sm:flex-none px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-50"
                       >
+<span>🗑️</span>
                         Delete
                       </Button>
                     </div>

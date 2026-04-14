@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { Sparkles, User, Mail, Lock, ArrowRight, LogIn, UserPlus, CheckCircle, X } from 'lucide-react';
 
-const AuthPage = () => {
-  const { login, logout, user, isAuthenticated } = useAuth();
+const AuthPageNew = () => {
+  const { login, user, isAuthenticated } = useAuth();
+
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
     username: '',
@@ -10,148 +12,19 @@ const AuthPage = () => {
     password: '',
     confirmPassword: '',
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (error) setError('');
     if (success) setSuccess('');
-  };
-
-  const validateLoginForm = () => {
-    if (!formData.username.trim()) {
-      setError('Username is required');
-      return false;
-    }
-    if (formData.username.length < 3) {
-      setError('Username must be at least 3 characters');
-      return false;
-    }
-    if (!formData.password) {
-      setError('Password is required');
-      return false;
-    }
-    return true;
-  };
-
-  const validateRegisterForm = () => {
-    if (!formData.username.trim()) {
-      setError('Username is required');
-      return false;
-    }
-    if (formData.username.length < 3) {
-      setError('Username must be at least 3 characters');
-      return false;
-    }
-    if (!formData.email.trim()) {
-      setError('Email is required');
-      return false;
-    }
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setError('Email is invalid');
-      return false;
-    }
-    if (!formData.password) {
-      setError('Password is required');
-      return false;
-    }
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters');
-      return false;
-    }
-    if (!formData.confirmPassword) {
-      setError('Please confirm your password');
-      return false;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      if (isLoginMode) {
-        if (!validateLoginForm()) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch('http://127.0.0.1:8000/auth/login/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: formData.username,
-            password: formData.password,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.token) {
-          login(data);
-          setSuccess('Login successful! Redirecting...');
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        } else {
-          setError(data.username || data.password || data.detail || 'Login failed');
-        }
-      } else {
-        if (!validateRegisterForm()) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch('http://127.0.0.1:8000/auth/register/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-            confirm_password: formData.confirmPassword,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.token) {
-          login(data);
-          setSuccess('Registration successful! Redirecting...');
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
-        } else {
-          setError(data.username || data.email || data.password || data.detail || 'Registration failed');
-        }
-      }
-    } catch (err) {
-      setError('Network error. Please check your connection.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSocialLogin = (provider) => {
-    setSuccess(`${provider} login coming soon!`);
-    setTimeout(() => setSuccess(''), 2000);
   };
 
   const toggleMode = () => {
@@ -166,23 +39,83 @@ const AuthPage = () => {
     setIsLoginMode(!isLoginMode);
   };
 
-  // If already authenticated, show logout option
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const url = isLoginMode
+        ? 'http://127.0.0.1:8000/auth/login/'
+        : 'http://127.0.0.1:8000/auth/register/';
+
+      const payload = isLoginMode
+        ? {
+            username: formData.username,
+            password: formData.password,
+          }
+        : {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+          };
+
+      console.log('Attempting to connect to:', url);
+      console.log('Payload:', payload);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      console.log('Response:', data);
+
+      if (response.ok && data.token) {
+        login(data);
+        setSuccess('Success! Redirecting...');
+
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 800);
+      } else {
+        const errorMessage = data.username || data.email || data.password || data.detail || data.non_field_errors || 'Authentication failed';
+        setError(Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage);
+      }
+    } catch (err) {
+      console.error('Network error:', err);
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        setError('Cannot connect to server. Please ensure the backend is running at http://127.0.0.1:8000');
+      } else {
+        setError(`Network error: ${err.message}. Please try again.`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Already logged in view
   if (isAuthenticated && user) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-[#141414] to-[#1f1f1f]">
-        <div className="w-[300px] bg-white rounded-2xl shadow-2xl p-8 text-center">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 px-4">
+        <div className="w-full max-w-sm bg-white/80 backdrop-blur-lg shadow-2xl rounded-2xl p-8 text-center border border-gray-100">
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/30">
+            <Sparkles className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome!</h2>
-          <p className="text-gray-600 mb-6">{user.username || user.email}</p>
+          <p className="text-gray-600 mb-6 font-medium">{user.username || user.email}</p>
+
           <button
-            onClick={() => window.location.href = '/'}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all text-sm shadow-md"
+            onClick={() => (window.location.href = '/')}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30"
           >
-            Continue to Dashboard
+            <ArrowRight className="w-5 h-5" />
+            Go to Dashboard
           </button>
         </div>
       </div>
@@ -190,119 +123,183 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-[#141414] to-[#1f1f1f]">
-        <div className="w-[300px] bg-white rounded-2xl shadow-2xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {isLoginMode ? 'Sign In' : 'Sign Up'}
-            </h1>
-            <p className="text-gray-500 text-sm">
-              {isLoginMode ? 'to continue to TaskSphere' : 'to get started with TaskSphere'}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-8">
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24 w-full max-w-6xl">
+          
+          {/* Left Column - Branding */}
+          <div className="flex-1 max-w-md text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-xl shadow-blue-500/30">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                TaskSphere
+              </h1>
+            </div>
+            <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed font-medium">
+              {isLoginMode
+                ? 'Connect with your tasks and manage your productivity with TaskSphere.'
+                : 'Join TaskSphere to manage your tasks and boost your productivity.'}
             </p>
           </div>
 
-          <form className="space-y-5 mb-8" onSubmit={handleSubmit}>
-            <div>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Username"
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
-            </div>
-
-            {!isLoginMode && (
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="E-mail"
-                  required
-                  disabled={loading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                />
+          {/* Right Column - Authentication Card */}
+          <div className="w-full max-w-md">
+            <div className="bg-white/80 backdrop-blur-lg shadow-2xl rounded-2xl p-8 border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${
+                  isLoginMode 
+                    ? 'bg-gradient-to-br from-blue-600 to-indigo-600' 
+                    : 'bg-gradient-to-br from-green-500 to-emerald-600'
+                }`}>
+                  {isLoginMode ? (
+                    <LogIn className="w-6 h-6 text-white" />
+                  ) : (
+                    <UserPlus className="w-6 h-6 text-white" />
+                  )}
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {isLoginMode ? 'Log In' : 'Sign Up'}
+                </h2>
               </div>
-            )}
 
-            <div>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Password"
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
-            </div>
-
-            {!isLoginMode && (
-              <div>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm Password"
-                  required
-                  disabled={loading}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                />
-              </div>
-            )}
-
-            {success && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-2 text-green-800 text-xs">
-                {success}
-              </div>
-            )}
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-red-800 text-xs">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-md"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
-                    {isLoginMode ? 'Signing In...' : 'Creating Account...'}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      name="username"
+                      placeholder="Enter your username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      disabled={loading}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
+                    />
                   </div>
-                ) : (
-                  isLoginMode ? 'Sign In' : 'Sign Up'
-                )}
-              </button>
-            </div>
-          </form>
+                </div>
 
-          <div>
-            <p className="text-xs text-gray-600">
-              {isLoginMode ? "Don't have an account?" : "Already have an account?"}{' '}
-              <button
-                type="button"
-                onClick={toggleMode}
-                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-              >
-                {isLoginMode ? 'Sign up' : 'Sign in'}
-              </button>
-            </p>
+                {!isLoginMode && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        disabled={loading}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      disabled={loading}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                {!isLoginMode && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        disabled={loading}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-xl border border-red-100">
+                    <X className="w-4 h-4" />
+                    {error}
+                  </div>
+                )}
+
+                {success && (
+                  <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-xl border border-green-100">
+                    <CheckCircle className="w-4 h-4" />
+                    {success}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <>
+                      <span>{isLoginMode ? 'Logging in...' : 'Creating account...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      {isLoginMode ? (
+                        <>
+                          <LogIn className="w-5 h-5" />
+                          Log In
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="w-5 h-5" />
+                          Sign Up
+                        </>
+                      )}
+                    </>
+                  )}
+                </button>
+              </form>
+
+              <div className="border-t border-gray-200 mt-6 pt-6">
+                <p className="text-center text-gray-600 font-medium">
+                  {isLoginMode ? "Don't have an account?" : 'Already have an account?'}{' '}
+                  <button
+                    onClick={toggleMode}
+                    className="text-blue-600 font-bold hover:underline flex items-center gap-1 mx-auto"
+                  >
+                    {isLoginMode ? (
+                      <>
+                        <UserPlus className="w-4 h-4" />
+                        Sign up
+                      </>
+                    ) : (
+                      <>
+                        <LogIn className="w-4 h-4" />
+                        Log in
+                      </>
+                    )}
+                  </button>
+                </p>
+              </div>
+            </div>
           </div>
+
         </div>
-    </div>
+      </div>
   );
 };
 
-export default AuthPage;
+export default AuthPageNew;
