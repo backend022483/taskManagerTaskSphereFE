@@ -50,8 +50,6 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
     
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters';
     }
     
     if (!formData.confirmPassword) {
@@ -201,7 +199,6 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Create a password (min. 8 characters)"
               required
               disabled={loading}
               error={fieldErrors.password}

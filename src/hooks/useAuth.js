@@ -1,5 +1,4 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { apiService, endpoints } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -56,24 +55,8 @@ export const AuthProvider = ({ children }) => {
     console.log('useAuth - Login complete, token stored');
   };
 
-  const logout = async () => {
     console.log('useAuth - Logout called');
     
-    try {
-      // Call backend logout endpoint if we have a token
-      if (token) {
-        try {
-          await apiService.post(endpoints.logout);
-          console.log('useAuth - Backend logout successful');
-        } catch (error) {
-          console.warn('useAuth - Backend logout failed:', error);
-          // Continue with local logout even if backend logout fails
-        }
-      }
-    } catch (error) {
-      console.warn('useAuth - Error during logout:', error);
-    } finally {
-      // Always clear local state regardless of backend call success
       setUser(null);
       setToken(null);
       
@@ -84,7 +67,6 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.removeItem('backupUser');
       
       console.log('useAuth - Logout complete');
-    }
   };
 
   const isAuthenticated = !!token;

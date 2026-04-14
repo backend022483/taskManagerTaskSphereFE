@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import AuthPageNew from './AuthPageNew';
 import Loading from './Loading';
 
 const ProtectedRoute = ({ children }) => {
@@ -28,7 +27,6 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <AuthPageNew />;
   }
 
   return children;
