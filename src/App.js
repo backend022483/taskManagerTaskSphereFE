@@ -10,7 +10,6 @@ import { Sparkles, LogOut, Loader2 } from 'lucide-react';
 import { useAuth, AuthProvider } from './hooks/useAuth';
 
 import AuthPageNew from './components/AuthPageNew';
-import FacebookLogin from './components/FacebookLogin';
 import Dashboard from './pages/Dashboard';
 import TaskList from './pages/TaskList';
 import CreateTask from './pages/CreateTask';

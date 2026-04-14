@@ -34,11 +34,6 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
   const taskStats = [
     { title: "Total Tasks", value: tasks.length, icon: ClipboardList, gradient: "from-blue-500 to-blue-600", bg: "bg-blue-50" },
     { title: "To Do", value: tasks.filter(t => t.status === 'todo').length, icon: Circle, gradient: "from-gray-500 to-gray-600", bg: "bg-gray-50" },

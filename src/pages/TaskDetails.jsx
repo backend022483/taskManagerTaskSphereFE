@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Card from '../components/Card';
-import Button from '../components/Button';
 
 const TaskDetails = () => {
   const navigate = useNavigate();

@@ -65,9 +65,9 @@ const FacebookLogin = () => {
                 </button>
 
                 <div className="text-center">
-                  <a href="#" className="text-blue-600 hover:underline text-sm">
+                  <button type="button" className="text-blue-600 hover:underline text-sm">
                     Forgotten password?
-                  </a>
+                  </button>
                 </div>
 
                 <div className="border-t border-gray-300 pt-4">
@@ -83,9 +83,9 @@ const FacebookLogin = () => {
 
             <div className="text-center mt-6">
               <p className="text-sm text-gray-600">
-                <a href="#" className="font-semibold hover:underline">
+                <button type="button" className="font-semibold hover:underline">
                   Create a Page
-                </a>
+                </button>
                 {' '}for a celebrity, brand or business.
               </p>
             </div>
