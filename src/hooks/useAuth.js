@@ -55,18 +55,19 @@ export const AuthProvider = ({ children }) => {
     console.log('useAuth - Login complete, token stored');
   };
 
+  const logout = () => {
     console.log('useAuth - Logout called');
     
-      setUser(null);
-      setToken(null);
-      
-      // Clear both storages
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      sessionStorage.removeItem('backupToken');
-      sessionStorage.removeItem('backupUser');
-      
-      console.log('useAuth - Logout complete');
+    setUser(null);
+    setToken(null);
+    
+    // Clear both storages
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('backupToken');
+    sessionStorage.removeItem('backupUser');
+    
+    console.log('useAuth - Logout complete');
   };
 
   const isAuthenticated = !!token;
