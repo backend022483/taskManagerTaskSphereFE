@@ -47,8 +47,8 @@ const AuthPageNew = () => {
 
     try {
       const url = isLoginMode
-        ? 'http://127.0.0.1:8000/auth/login/'
-        : 'http://127.0.0.1:8000/auth/register/';
+        ? 'https://task-sphere-management.vercel.app/auth/login/'
+        : 'https://task-sphere-management.vercel.app/auth/register/';
 
       const payload = isLoginMode
         ? {
@@ -90,7 +90,7 @@ const AuthPageNew = () => {
     } catch (err) {
       console.error('Network error:', err);
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
-        setError('Cannot connect to server. Please ensure the backend is running at http://127.0.0.1:8000');
+        setError('Cannot connect to server. Please check your internet connection.');
       } else {
         setError(`Network error: ${err.message}. Please try again.`);
       }

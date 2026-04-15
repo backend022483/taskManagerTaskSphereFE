@@ -110,7 +110,7 @@ const EditTask = () => {
       
       // Try to sync with API
       try {
-        await fetch(`http://127.0.0.1:8000/api/tasks/${id}/`, {
+        await fetch(`https://task-sphere-management.vercel.app/api/tasks/${id}/`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

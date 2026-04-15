@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: 'https://task-sphere-management.vercel.app',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

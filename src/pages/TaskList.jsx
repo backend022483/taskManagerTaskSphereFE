@@ -26,7 +26,7 @@ const TaskList = () => {
     try {
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('backupToken');
       if (token) {
-        await fetch(`http://127.0.0.1:8000/api/tasks/${taskId}/`, {
+        await fetch(`https://task-sphere-management.vercel.app/api/tasks/${taskId}/`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`

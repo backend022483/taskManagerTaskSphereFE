@@ -76,7 +76,7 @@ const CreateTask = () => {
         JSON.stringify([...existingTasks, newTask])
       );
 
-      await fetch('http://127.0.0.1:8000/api/tasks/', {
+      await fetch('https://task-sphere-management.vercel.app/api/tasks/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
